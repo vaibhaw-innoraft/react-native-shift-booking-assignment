@@ -6,26 +6,38 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  SectionList,
 } from 'react-native';
 import moment from 'moment';
 import colors from '../theme/colors';
 import {APP_URL} from '../constants';
-import {groupByDate} from '../utils';
+import {getTotDurationForShift, groupByDate} from '../utils';
 
 const MyShiftScreen = () => {
   const [shifts, setShifts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
+    fetchData();
+  }, []);
+  const refreshData = () => {
+    fetchData();
+  };
+  const fetchData = () => {
+    setRefreshing(true);
     fetch(APP_URL + 'shifts', {method: 'GET'})
       .then(res => res.json())
       .then(res => {
         let activeData = res.filter(i => i.booked);
-        // console.log(JSON.stringify(groupByDate('startTime', activeData)))
-        setShifts(activeData);
+        // console.log(activeData);
+
+        // setShifts(activeData);
+        setShifts(groupByDate('startTime', activeData));
       })
       .catch(e => {
-        console.log(e);
-      });
-  }, []);
+        console.log(JSON.stringify(e));
+      })
+      .finally(() => setRefreshing(false));
+  };
   const _handleAction = item => {
     if (item.booked) {
       cancelBooking(item);
@@ -73,11 +85,24 @@ const MyShiftScreen = () => {
   };
   return (
     <SafeAreaView style={{flex: 1}}>
-      <FlatList
-        data={shifts}
+      <SectionList
+        sections={shifts}
+        renderSectionHeader={({section: {title, data}}) => {
+          let totDuration = getTotDurationForShift(data);
+          return (
+            <View style={styles.status}>
+              <Text style={{color: colors.colorA4, fontSize: 18}}>
+                {moment(title).format('DD MMM`YY')} {data.length} shifts{' '}
+                {totDuration} hours
+              </Text>
+            </View>
+          );
+        }}
         renderItem={_renderItem}
         keyExtractor={item => item.id}
         ItemSeparatorComponent={() => <View style={{height: 2}} />}
+        onRefresh={refreshData}
+        refreshing={refreshing}
       />
     </SafeAreaView>
   );

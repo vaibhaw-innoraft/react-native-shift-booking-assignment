@@ -16,6 +16,12 @@ export function groupByDate<T>(key: string, arr: T[]): { title: string, data: T[
         return storage;
     }, [] as { title: string, data: T[] }[]);
 };
+export function getTotDurationForShift(shifts){
+    let minutes = 0;
+    shifts.map(shift => minutes += moment(shift.endTime).diff(moment(shift.startTime), 'minute'));
+    return moment.duration(minutes, 'minutes').hours();
+};
+
 // call this function, passing-in your date
 export function dateToFromNowDaily( myDate ) {
 

@@ -22,8 +22,9 @@ const Navigation = () => {
           tabBarLabelStyle: {fontSize: 18},
           tabBarActiveTintColor: colors.color04,
           tabBarInactiveTintColor: colors.color4F,
+          tabBarIconStyle: { display: "none" },
         }}>
-        <Tab.Screen name="My shift" component={MyShiftScreen} />
+        <Tab.Screen name="My shift" options={{}} component={MyShiftScreen} />
         <Tab.Screen name="Available shift" component={AvailableShiftScreen} />
       </Tab.Navigator>
     </NavigationContainer>

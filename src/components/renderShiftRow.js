@@ -47,6 +47,7 @@ const RenderShiftRow = ({data}) => {
       <View style={styles.status}>
         <Text style={{color: colors.color4F, fontWeight: '600', fontSize: 18}}>
           {item.booked ? 'Booked' : ''}
+          {item?.overlapping ? 'Overlapping':''}
         </Text>
       </View>
       <TouchableOpacity
